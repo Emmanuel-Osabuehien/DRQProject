@@ -30,80 +30,66 @@ mongoose.connect(myConnectionString, { useNewUrlParser: true });
 
 const Schema = mongoose.Schema;
 
-var movieSchema = new Schema({
+var gameSchema = new Schema({
     title: String,
+    console: String,
     year: String,
-    poster: String
+    poster: String,
+    price: String
 });
 
-var MovieModel = mongoose.model("movie", movieSchema);
+var MyGameModel = mongoose.model("game", gameSchema);
 
-app.get('/api/movies', (req, res) => {
+app.get('/thegame', (req, res) => {
 
-
-    //     const mymovies = [{
-    //         "Title":"Avengers: Infinity War",
-    //         "Year":"2018",
-    //         "imdbID":"tt4154756",
-    //         "Type":"movie",
-    //         "Poster":"https://m.media-amazon.com/images/M/MV5BMjMxNjY2MDU1OV5BMl5BanBnXkFtZTgwNzY1MTUwNTM@._V1_SX300.jpg"
-    //         },
-    //         {
-    //         "Title":"Captain America: Civil War",
-    //         "Year":"2016",
-    //         "imdbID":"tt3498820",
-    //         "Type":"movie",
-    //         "Poster":"https://m.media-amazon.com/images/M/MV5BMjQ0MTgyNjAxMV5BMl5BanBnXkFtZTgwNjUzMDkyODE@._V1_SX300.jpg"
-    //         }];
-
-    MovieModel.find((err, data) => {
+    MyGameModel.find((err, data) => {
         res.json(data);
     })
-
-    // res.status(200).json({
-    //     message: "Everything is ok",
-    //     movies:mymovies});
 })
 
-app.get('/api/movies/:id', (req, res) => {
+app.get('/thegame/:id', (req, res) => {
     console.log(req.params.id);
 
-    MovieModel.findById(req.params.id, (err, data) => {
+    MyGameModel.findById(req.params.id, (err, data) => {
         res.json(data);
     })
 })
 
-app.put('/api/movies/:id', (req, res) => {
-    console.log("Update Mvoie: " + req.params.id);
+app.post('/thegame', (req, res) => {
+    console.log("Game: " + req.params.id + " was created");
+    console.log(req.body.title);
+    console.log(req.body.console);
+    console.log(req.body.year);
+    console.log(req.body.poster);
+    console.log(req.body.price);
+
+    MyGameModel.create({
+        title: req.body.title,
+        console: req.body.console,
+        year: req.body.year,
+        poster: req.body.poster,
+        price: req.body.price
+    })
+
+    res.redirect('/read');
+})
+
+app.put('/thegame/:id', (req, res) => {
+    console.log("Game: " + req.params.id + " was updated");
     console.log(req.body);
 
-    MovieModel.findByIdAndUpdate(req.params.id, req.body, { new: true },
+    MyGameModel.findByIdAndUpdate(req.params.id, req.body, { new: true },
         (err, data) => {
             res.send(data);
         })
 })
 
-app.delete('/api/movies/:id', (req, res) => {
-    console.log("Delete Movie: " + req.params.id);
+app.delete('/thegame/:id', (req, res) => {
+    console.log("Game: " + req.params.id + " was deleted");
 
-    MovieModel.findByIdAndDelete(req.params.id, (err, data) => {
+    MyGameModel.findByIdAndDelete(req.params.id, (err, data) => {
         res.send(data);
     })
-})
-
-app.post('/api/movies', (req, res) => {
-    console.log('Movie Recieved!');
-    console.log(req.body.title);
-    console.log(req.body.year);
-    console.log(req.body.poster);
-
-    MovieModel.create({
-        title: req.body.title,
-        year: req.body.year,
-        poster: req.body.poster
-    })
-
-    res.send('Item Added');
 })
 
 app.get('*', (req, res) => {
